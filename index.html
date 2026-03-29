@@ -6,57 +6,99 @@
     <title>fed</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; font-family: 'Inter', sans-serif; overflow: hidden; background-color: #000; }
-        
-        #bg-video { position: fixed; right: 0; bottom: 0; min-width: 100%; min-height: 100%; z-index: -1; filter: brightness(0.4) grayscale(0.5); object-fit: cover; }
-        
-        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 100; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body, html { 
+            width: 100%; height: 100%; 
+            font-family: 'Inter', sans-serif; 
+            background-color: #000; 
+            overflow: hidden; 
+        }
+
+        /* THE WALLPAPER (VIDEO) */
+        #bg-video {
+            position: fixed;
+            top: 50%; left: 50%;
+            min-width: 100%; min-height: 100%;
+            width: auto; height: auto;
+            z-index: -1;
+            transform: translate(-50%, -50%);
+            filter: brightness(0.4) grayscale(0.3);
+            object-fit: cover;
+            /* Fallback image if video fails */
+            background: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2070') no-repeat center center;
+            background-size: cover;
+        }
+
+        /* ENTRANCE OVERLAY */
+        #overlay {
+            position: fixed; top: 0; left: 0; 
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,1);
+            z-index: 100;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
         #overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
-        .container { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; }
-        
-        .glass-card { 
-            background: rgba(255, 255, 255, 0.03); 
-            backdrop-filter: blur(20px); 
-            -webkit-backdrop-filter: blur(20px); 
-            border: 1px solid rgba(255, 255, 255, 0.08); 
-            border-radius: 20px; padding: 25px; width: 340px; 
-            color: white; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6); 
+        /* CONTENT CONTAINER */
+        .container {
+            height: 100vh;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            gap: 12px;
+            z-index: 10;
         }
 
-        .profile-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
-        .pfp { width: 65px; height: 65px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(255,255,255,0.15); }
-        .info h1 { margin: 0; font-size: 22px; letter-spacing: -0.5px; font-weight: 600; }
-        .info p { margin: 0; font-size: 11px; color: rgba(255, 255, 255, 0.4); text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; }
-
-        .widget { 
-            background: rgba(0, 0, 0, 0.4); 
-            border-radius: 14px; padding: 14px; display: flex; 
-            align-items: center; gap: 12px; text-decoration: none; 
-            color: white; border: 1px solid rgba(255, 255, 255, 0.03); 
-            transition: all 0.4s ease; margin-bottom: 10px;
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 24px;
+            width: 350px;
+            color: white;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
         }
-        .widget:hover { background: rgba(255, 255, 255, 0.06); transform: scale(1.02); }
-        .widget img { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; }
-        .widget-text b { font-size: 13px; display: block; color: rgba(255,255,255,0.9); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
-        .widget-text span { font-size: 11px; color: rgba(255,255,255,0.4); }
 
-        #status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 8px; }
-        .online { background: #43b581; box-shadow: 0 0 8px #43b581; }
+        .profile-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .pfp { width: 65px; height: 65px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(255,255,255,0.2); }
+        .info h1 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.5px; }
+        .info p { margin: 0; font-size: 11px; color: rgba(255, 255, 255, 0.4); display: flex; align-items: center; gap: 6px; }
+
+        /* WIDGETS */
+        .widget {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 14px; padding: 14px;
+            display: flex; align-items: center; gap: 12px;
+            text-decoration: none; color: white;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: 0.3s ease; margin-top: 10px;
+        }
+        .widget:hover { background: rgba(255, 255, 255, 0.08); transform: translateY(-2px); }
+        .widget img { width: 40px; height: 40px; border-radius: 8px; }
+        .widget-text b { font-size: 13px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px; }
+        .widget-text span { font-size: 10px; color: rgba(255,255,255,0.4); }
+
+        /* DISCORD DOTS */
+        #status-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .online { background: #43b581; box-shadow: 0 0 10px #43b581; }
         .idle { background: #faa61a; }
         .dnd { background: #f04747; }
         .offline { background: #747f8d; }
 
-        #youtube-player { position: absolute; top: -1000px; left: -1000px; pointer-events: none; }
+        #youtube-player { position: absolute; top: -1000px; left: -1000px; }
     </style>
 </head>
 <body>
 
     <div id="overlay" onclick="enterSite()">
-        <p style="color: white; letter-spacing: 10px; font-size: 9px; font-weight: 300; opacity: 0.6;">[ CLICK TO ENTER ]</p>
+        <p style="color: white; letter-spacing: 10px; font-size: 10px; opacity: 0.5;">[ CLICK TO ENTER ]</p>
     </div>
 
-    <video autoplay muted loop id="bg-video">
+    <video autoplay muted loop playsinline id="bg-video">
         <source src="https://r2.guns.lol/3022ecf9-4d15-45e1-b0e9-9e2dc93bf0df.mp4" type="video/mp4">
     </video>
 
@@ -68,23 +110,23 @@
                 <img src="https://i.pinimg.com/736x/5c/ce/94/5cce949ac2c8d1e4472ae82ed12d4a8a.jpg" class="pfp">
                 <div class="info">
                     <h1>fed</h1>
-                    <p><span id="status-dot"></span><span id="status-text">loading...</span></p>
+                    <p><span id="status-dot"></span><span id="status-text">connecting...</span></p>
                 </div>
             </div>
 
             <div id="activity-widget" class="widget">
                 <div id="activity-icon" style="width: 40px; height: 40px; background: rgba(255,255,255,0.05); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px;">👤</div>
                 <div class="widget-text">
-                    <b id="activity-name">Loading Activity...</b>
-                    <span id="activity-detail">please wait</span>
+                    <b id="activity-name">Idling</b>
+                    <span id="activity-detail">no current activity</span>
                 </div>
             </div>
 
             <a href="https://www.roblox.com/users/7343082133/profile" target="_blank" class="widget">
                 <img src="https://tr.rbxcdn.com/30DAY-AvatarHeadshot-7343082133-Png/150/150/AvatarHeadshot/WebP/noFilter" alt="rbx">
                 <div class="widget-text">
-                    <b>Roblox Profile</b>
-                    <span style="color: #00ff7f;">Active Profile</span>
+                    <b>Roblox</b>
+                    <span style="color: #00ff7f;">View Profile</span>
                 </div>
             </a>
         </div>
@@ -95,8 +137,13 @@
 
         function enterSite() {
             document.getElementById('overlay').classList.add('hidden');
-            document.getElementById('youtube-player').contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-            document.getElementById('bg-video').muted = false;
+            // Play Audio
+            const player = document.getElementById('youtube-player');
+            player.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+            // Play Video
+            const video = document.getElementById('bg-video');
+            video.muted = false;
+            video.play();
         }
 
         async function updateStatus() {
@@ -104,24 +151,26 @@
                 const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);
                 const { data } = await res.json();
                 
+                // Update Discord Status
                 document.getElementById('status-dot').className = data.discord_status;
                 document.getElementById('status-text').innerText = data.discord_status;
 
+                // Handle Spotify or Activity
                 if (data.listening_to_spotify) {
                     document.getElementById('activity-name').innerText = data.spotify.song;
                     document.getElementById('activity-detail').innerText = `by ${data.spotify.artist}`;
-                    document.getElementById('activity-icon').innerHTML = `<img src="${data.spotify.album_art_url}" style="width:100%; height:100%; border-radius:8px;">`;
+                    document.getElementById('activity-icon').innerHTML = `<img src="${data.spotify.album_art_url}" style="width:100%; border-radius:8px;">`;
                 } else if (data.activities.length > 0) {
-                    const activity = data.activities[0];
-                    document.getElementById('activity-name').innerText = activity.name;
-                    document.getElementById('activity-detail').innerText = activity.details || 'playing';
+                    const act = data.activities[0];
+                    document.getElementById('activity-name').innerText = act.name;
+                    document.getElementById('activity-detail').innerText = act.details || 'active now';
                     document.getElementById('activity-icon').innerHTML = "🎮";
                 } else {
-                    document.getElementById('activity-name').innerText = "Not playing anything";
-                    document.getElementById('activity-detail').innerText = "idling";
+                    document.getElementById('activity-name').innerText = "Idling";
+                    document.getElementById('activity-detail').innerText = "no current activity";
                     document.getElementById('activity-icon').innerHTML = "👤";
                 }
-            } catch (e) { console.error(e); }
+            } catch (e) { console.error("Lanyard Error:", e); }
         }
 
         setInterval(updateStatus, 5000);
