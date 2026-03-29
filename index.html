@@ -5,89 +5,107 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>fed</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
-
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+        
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
+        
         body, html { 
             width: 100%; height: 100%; 
             font-family: 'Inter', sans-serif; 
-            background-color: #000; 
+            background-color: #000;
             overflow: hidden; 
+            color: #fff;
         }
 
-        /* THE WALLPAPER (VIDEO) */
+        /* The Fog Background Video */
         #bg-video {
             position: fixed;
             top: 50%; left: 50%;
             min-width: 100%; min-height: 100%;
-            width: auto; height: auto;
             z-index: -1;
             transform: translate(-50%, -50%);
-            filter: brightness(0.4) grayscale(0.3);
+            filter: brightness(0.3) grayscale(0.2);
             object-fit: cover;
-            /* Fallback image if video fails */
-            background: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2070') no-repeat center center;
-            background-size: cover;
         }
 
-        /* ENTRANCE OVERLAY */
+        /* "CLICK TO ENTER" OVERLAY */
         #overlay {
-            position: fixed; top: 0; left: 0; 
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,1);
-            z-index: 100;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 100; display: flex; align-items: center; 
+            justify-content: center; cursor: pointer; transition: 1.5s ease;
         }
         #overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
-        /* CONTENT CONTAINER */
-        .container {
-            height: 100vh;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            gap: 12px;
-            z-index: 10;
+        /* MAIN CONTAINER (Centered on screen) */
+        .container { 
+            height: 100vh; display: flex; align-items: center; justify-content: center; 
         }
 
-        .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-            padding: 24px;
-            width: 350px;
-            color: white;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        /* MAIN GLASS CARD (Matching wide layout) */
+        .glass-header { 
+            background: rgba(255, 255, 255, 0.03); 
+            backdrop-filter: blur(25px); 
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            border-radius: 20px; 
+            padding: 30px 40px; 
+            width: 750px; /* Wide header */
+            position: relative;
+            display: flex; flex-direction: column; gap: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            animation: fadeIn 2s ease;
         }
 
-        .profile-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
-        .pfp { width: 65px; height: 65px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(255,255,255,0.2); }
-        .info h1 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.5px; }
-        .info p { margin: 0; font-size: 11px; color: rgba(255, 255, 255, 0.4); display: flex; align-items: center; gap: 6px; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* WIDGETS */
-        .widget {
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 14px; padding: 14px;
-            display: flex; align-items: center; gap: 12px;
-            text-decoration: none; color: white;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: 0.3s ease; margin-top: 10px;
+        /* The Profile Section (Left) */
+        .profile-area { display: flex; align-items: center; gap: 20px; }
+        .pfp { 
+            width: 75px; height: 75px; border-radius: 50%; 
+            object-fit: cover; border: 2px solid #fff; 
+            box-shadow: 0 0 15px rgba(255,255,255,0.4); 
+            transition: transform 0.3s;
         }
-        .widget:hover { background: rgba(255, 255, 255, 0.08); transform: translateY(-2px); }
-        .widget img { width: 40px; height: 40px; border-radius: 8px; }
-        .widget-text b { font-size: 13px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px; }
-        .widget-text span { font-size: 10px; color: rgba(255,255,255,0.4); }
+        .pfp:hover { transform: scale(1.05); }
 
-        /* DISCORD DOTS */
+        .info h1 { 
+            margin: 0; font-size: 28px; font-weight: 600; 
+            letter-spacing: -0.5px; text-transform: lowercase; 
+            text-shadow: 0 0 12px rgba(255,255,255,0.8); /* Glow */
+        }
+
+        /* Real-time Status Dot (Left) */
+        .info p { 
+            margin: 0; font-size: 11px; color: rgba(255, 255, 255, 0.4); 
+            display: flex; align-items: center; gap: 6px; text-transform: uppercase;
+        }
         #status-dot { width: 8px; height: 8px; border-radius: 50%; }
         .online { background: #43b581; box-shadow: 0 0 10px #43b581; }
-        .idle { background: #faa61a; }
-        .dnd { background: #f04747; }
         .offline { background: #747f8d; }
+
+        /* The Metadata (Right: Views/Location) */
+        .meta-area { 
+            position: absolute; top: 30px; right: 40px; 
+            display: flex; align-items: center; gap: 15px; 
+            color: rgba(255, 255, 255, 0.5); font-size: 11px; 
+        }
+        .meta-area span { display: flex; align-items: center; gap: 5px; }
+
+        /* The Minimalist Glowing Icons (Bottom) */
+        .icons-area { 
+            display: flex; align-items: center; justify-content: center; gap: 25px; 
+            margin-top: 10px; font-size: 32px; color: rgba(255,255,255,0.7); 
+        }
+        .icons-area a { 
+            text-decoration: none; color: inherit; transition: all 0.3s; 
+            display: flex; align-items: center; justify-content: center;
+        }
+        
+        /* The Glo-Fi hover effect from the image */
+        .icons-area a:hover { 
+            color: #fff; transform: scale(1.1) translateY(-2px);
+            filter: drop-shadow(0 0 12px rgba(255,255,255,0.9)); 
+        }
 
         #youtube-player { position: absolute; top: -1000px; left: -1000px; }
     </style>
@@ -95,40 +113,42 @@
 <body>
 
     <div id="overlay" onclick="enterSite()">
-        <p style="color: white; letter-spacing: 10px; font-size: 10px; opacity: 0.5;">[ CLICK TO ENTER ]</p>
+        <p style="letter-spacing: 12px; font-size: 10px; opacity: 0.5;">[ CLICK TO ENTER ]</p>
     </div>
 
     <video autoplay muted loop playsinline id="bg-video">
-        <source src="https://r2.guns.lol/3022ecf9-4d15-45e1-b0e9-9e2dc93bf0df.mp4" type="video/mp4">
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-clouds-and-blue-sky-background-2408-large.mp4" type="video/mp4">
     </video>
 
     <iframe id="youtube-player" width="10" height="10" src="https://www.youtube.com/embed/1kZCVdU1N6o?enablejsapi=1&autoplay=0" frameborder="0"></iframe>
 
     <div class="container">
-        <div class="glass-card">
-            <div class="profile-header">
+        <div class="glass-header">
+            
+            <div class="profile-area">
                 <img src="https://i.pinimg.com/736x/5c/ce/94/5cce949ac2c8d1e4472ae82ed12d4a8a.jpg" class="pfp">
                 <div class="info">
                     <h1>fed</h1>
-                    <p><span id="status-dot"></span><span id="status-text">connecting...</span></p>
+                    <p><span id="status-dot" class="offline"></span><span id="status-text">loading status...</span></p>
                 </div>
             </div>
 
-            <div id="activity-widget" class="widget">
-                <div id="activity-icon" style="width: 40px; height: 40px; background: rgba(255,255,255,0.05); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px;">👤</div>
-                <div class="widget-text">
-                    <b id="activity-name">Idling</b>
-                    <span id="activity-detail">no current activity</span>
-                </div>
+            <div class="meta-area">
+                <span>👁️ 10,496</span>
+                <span>|</span>
+                <span>📍 REDACTED</span>
             </div>
 
-            <a href="https://www.roblox.com/users/7343082133/profile" target="_blank" class="widget">
-                <img src="https://tr.rbxcdn.com/30DAY-AvatarHeadshot-7343082133-Png/150/150/AvatarHeadshot/WebP/noFilter" alt="rbx">
-                <div class="widget-text">
-                    <b>Roblox</b>
-                    <span style="color: #00ff7f;">View Profile</span>
-                </div>
-            </a>
+            <div class="icons-area">
+                <a href="#" id="discord-link" title="Discord: Connected">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.196.372.292a.077.077 0 0 1-.006.128 12.51 12.51 0 0 1-1.873.892.076.076 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.419 0 1.334-.956 2.419-2.157 2.419zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.419 0 1.334-.946 2.419-2.157 2.419z"/></svg>
+                </a>
+                
+                <a href="https://www.roblox.com/users/7343082133/profile" target="_blank" title="Roblox Profile">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M5.313 0L0 18.687l18.687 5.313L24 5.313 5.313 0zm11.233 13.921l-4.14 1.182-1.182-4.14 4.14-1.182 1.182 4.14z"/></svg>
+                </a>
+            </div>
+
         </div>
     </div>
 
@@ -137,13 +157,10 @@
 
         function enterSite() {
             document.getElementById('overlay').classList.add('hidden');
-            // Play Audio
             const player = document.getElementById('youtube-player');
             player.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-            // Play Video
             const video = document.getElementById('bg-video');
-            video.muted = false;
-            video.play();
+            video.play(); video.muted = false;
         }
 
         async function updateStatus() {
@@ -151,30 +168,14 @@
                 const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);
                 const { data } = await res.json();
                 
-                // Update Discord Status
+                // Real-time status in the profile area
                 document.getElementById('status-dot').className = data.discord_status;
                 document.getElementById('status-text').innerText = data.discord_status;
-
-                // Handle Spotify or Activity
-                if (data.listening_to_spotify) {
-                    document.getElementById('activity-name').innerText = data.spotify.song;
-                    document.getElementById('activity-detail').innerText = `by ${data.spotify.artist}`;
-                    document.getElementById('activity-icon').innerHTML = `<img src="${data.spotify.album_art_url}" style="width:100%; border-radius:8px;">`;
-                } else if (data.activities.length > 0) {
-                    const act = data.activities[0];
-                    document.getElementById('activity-name').innerText = act.name;
-                    document.getElementById('activity-detail').innerText = act.details || 'active now';
-                    document.getElementById('activity-icon').innerHTML = "🎮";
-                } else {
-                    document.getElementById('activity-name').innerText = "Idling";
-                    document.getElementById('activity-detail').innerText = "no current activity";
-                    document.getElementById('activity-icon').innerHTML = "👤";
-                }
-            } catch (e) { console.error("Lanyard Error:", e); }
+            } catch (e) { console.error(e); }
         }
 
-        setInterval(updateStatus, 5000);
-        updateStatus();
+        setInterval(updateStatus, 5000); // Check status every 5 seconds
+        updateStatus(); // Initial check
     </script>
 </body>
 </html>
